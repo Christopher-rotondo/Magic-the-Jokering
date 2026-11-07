@@ -7,8 +7,8 @@
 	"prefix": "mtg",
 	"main_file": "mtg.lua",
 	"priority": 0,
-	"badge_colour": "321d0e",
-	"badge_text_colour": "97572b",
+	"badge_colour": "97572b",
+	"badge_text_colour": "ffffff",
 	"version": "0.8.6b",
 	"dependencies": [
 		"Steamodded (>=1.0.0~ALPHA-1326a)",
