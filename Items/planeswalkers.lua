@@ -1,3 +1,11 @@
+local function is_playing_blind()
+    return G 
+        and G.GAME 
+        and G.GAME.blind 
+        and not G.GAME.blind.disabled 
+        and (G.STATE == G.STATES.SELECTING_HAND or G.STATE == G.STATES.HAND_PLAYED)
+end
+
 local function planeswalker_config(starting_loyalty)
     return {
         has_activated_loyalty = false,
@@ -166,7 +174,8 @@ SMODS.Joker {
             planeswalker_loyalty_ability(
                 2,
                 function(card, loyalty_ability)
-                    return G.GAME.blind
+                    local cards = #G.hand.cards
+                    return cards > 0
                 end,
                 function(card, loyalty_ability)
                     local bonus = math.floor(card.ability.extra.ability_1_cards)
@@ -188,8 +197,9 @@ SMODS.Joker {
             planeswalker_loyalty_ability(
                 -2,
                 function(card, loyalty_ability)
-                    local cards = #G.hand.cards
-                    return cards > 0
+                    local cards_in_hand = #G.hand.cards
+                    local cards_in_deck = #G.deck.cards
+                    return cards_in_hand > 0 and cards_in_deck > 0
                 end,
                 function(card, loyalty_ability)
                     -- Shoutout to Cryptid Mod, just using their implementation
@@ -269,16 +279,18 @@ SMODS.Joker {
             planeswalker_loyalty_ability(
                 2,
                 function(card, loyalty_ability)
-                    return G.GAME.blind
+                    local cards_in_hand = #G.hand.cards
+                    local cards_in_deck = #G.deck.cards
+                    return cards_in_hand > 0 and cards_in_deck > 0
                 end,
                 function(card, loyalty_ability)
-                    
+                    SMODS.draw_cards(card.ability.extra.ability_1_cards)
                 end
             ),
             planeswalker_loyalty_ability(
                 -3,
                 function(card, loyalty_ability)
-                    return G.GAME.blind
+                    return is_playing_blind()
                 end,
                 function(card, loyalty_ability)
                     damage_blind(card, card.ability.extra.ability_2_damage)
