@@ -98,8 +98,14 @@ SMODS.Joker {
                 function(card, loyalty_ability)
                     G.FUNCS.buff_cards(G.hand.cards, card.ability.extra.ability_2_strength, 1)
                     local jokers_to_buff = {}
-                    for index, value in ipairs(G.jokers.cards) do
-                        if value ~= card then table.insert(jokers_to_buff, value) end
+                    for i = 1, #G.jokers.cards do
+                        local other_joker = G.jokers.cards[i]
+                        if other_joker ~= card then
+                            local joker_key = other_joker.config.center.key
+                            if joker_key == 'j_mtg_ajani' or joker_key == 'j_mtg_jace' or joker_key == 'j_mtg_nicolbolas' then 
+                                table.insert(jokers_to_buff, G.jokers.cards[i]) 
+                            end
+                        end
                     end
                     G.FUNCS.buff_loyalty(jokers_to_buff, card.ability.extra.ability_2_loyalty, 1)
                 end
@@ -284,7 +290,18 @@ SMODS.Joker {
                     return cards_in_hand > 0 and cards_in_deck > 0
                 end,
                 function(card, loyalty_ability)
-                    SMODS.draw_cards(card.ability.extra.ability_1_cards)
+                    local cards = {}
+                    cards[#cards + 1] = G.deck.cards[#G.deck.cards]
+                    if #G.deck.cards > 1 then
+                        cards[#cards + 1] = G.deck.cards[#G.deck.cards - 1]
+                    end
+                    for i = 1, #cards do
+                        cards[i]:set_ability(G.P_CENTERS.m_gold, true)
+		            end
+                    SMODS.draw_cards(#cards)
+		            delay(0.3)
+                    --local card2 = G.deck.cards[#G.deck.cards - 1]
+                    --SMODS.draw_cards(card.ability.extra.ability_1_cards)
                 end
             ),
             planeswalker_loyalty_ability(
