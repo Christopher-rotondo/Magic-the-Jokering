@@ -349,19 +349,17 @@ SMODS.Joker {
 		return { vars = { center.ability.extra.bonus_mult, center.ability.extra.neg_mult} }
 	end,
 	calculate = function(self, card, context)
-    if context.main_scoring then
-      if context.cardarea == G.play then
-        if context.other_card:is_suit('Spades') then
-          return {
-            mult = card.ability.extra.bonus_mult,
-            card = card
-          }
-        else
-          return {
-            mult = -1 * card.ability.extra.neg_mult,
-            card = card
-          }
-        end
+    if context.individual and context.cardarea == G.play then
+      if context.other_card:is_suit('Spades') then
+        return {
+          mult = card.ability.extra.bonus_mult,
+          card = card
+        }
+      else
+        return {
+          mult = -1 * card.ability.extra.neg_mult,
+          card = card
+        }
       end
     end
   end
@@ -460,8 +458,8 @@ SMODS.Joker {
               card = card
             }
         elseif not context.other_card:is_face() then
-          G.FUNCS.draw_from_deck_to_hand(card.ability.extra.cards)
           card_eval_status_text(context.blueprint_card or card, 'extra', nil, nil, nil, {message = localize('mtg_draw_ex')})
+          SMODS.draw_cards(card.ability.extra.cards)
         end
       end
     end
@@ -1169,7 +1167,7 @@ SMODS.Joker {
       if #G.hand.cards > 0 then 
               card_eval_status_text(context.blueprint_card or card, 'extra', nil, nil, nil, {message = localize('mtg_draw_ex')})
               G.E_MANAGER:add_event(Event({trigger = 'after',delay = 0.1,func = function()
-                G.FUNCS.draw_from_deck_to_hand(card.ability.extra.cards)
+                SMODS.draw_cards(card.ability.extra.cards)
             return true end }))
       end
     end
