@@ -92,10 +92,6 @@ order = 1,
   loc_vars = function(self, info_queue, card)
     return { vars = {card.ability.extra.targets, card.ability.extra.buff, card.ability.extra.cards} }
   end,
-can_use = function(self, card)
-    local num_highlighted = #G.hand.highlighted
-    return num_highlighted <= card.ability.extra.targets and num_highlighted > 0
-end,
 use = function(self, card, area, copier)
   local used_tarot = copier or card
   G.E_MANAGER:add_event(Event({
@@ -117,9 +113,13 @@ use = function(self, card, area, copier)
             }))
             G.E_MANAGER:add_event(Event({trigger = 'after',delay = 0.1,func = function()
               
-              G.FUNCS.draw_from_deck_to_hand(card.ability.extra.cards)
+              SMODS.draw_cards(card.ability.extra.cards)
             return true end }))
             card_eval_status_text(copier or card, 'extra', nil, nil, nil, {message = localize('mtg_draw_ex')})
+end,
+can_use = function(self, card)
+    local num_highlighted = #G.hand.highlighted
+    return num_highlighted <= card.ability.extra.targets and num_highlighted > 0
 end
 }
 
@@ -277,9 +277,6 @@ SMODS.Consumable ({
       loc_vars = function(self, info_queue, card)
         return { vars = { card.ability.extra.cards } }
       end,
-    can_use = function(self, card)
-        return #G.hand.cards > 0
-    end,
     use = function(self, card, area, copier)
       local used_tarot = card or copier
     G.E_MANAGER:add_event(Event({trigger = 'after', delay = 0.4, func = function()
@@ -287,10 +284,13 @@ SMODS.Consumable ({
         used_tarot:juice_up(0.3, 0.5)
         return true end }))
           G.E_MANAGER:add_event(Event({trigger = 'after',delay = 0.1,func = function()
-            G.FUNCS.draw_from_deck_to_hand(card.ability.extra.cards)
+            SMODS.draw_cards(card.ability.extra.cards)
         return true end }))
         
         card_eval_status_text(copier or card, 'extra', nil, nil, nil, {message = localize('mtg_draw_ex')})
+    end,
+    can_use = function(self, card)
+        return G.GAME.blind and G.deck and #G.deck.cards > 0
     end,
 })
 
@@ -620,9 +620,6 @@ order = 10,
   loc_vars = function(self, info_queue, card)
     return { vars = { card.ability.extra.targets, card.ability.extra.cards } }
   end,
-can_use = function(self, card)
-    return #G.hand.highlighted <= card.ability.extra.targets and #G.hand.highlighted > 0
-end,
 use = function(self, card, area, copier)
   destroyed_cards = {}
   local used_tarot = card or copier
@@ -640,10 +637,13 @@ G.E_MANAGER:add_event(Event({
             destroy_cards(G.hand.highlighted)
         return true end }))
   G.E_MANAGER:add_event(Event({trigger = 'after',delay = 0.1,func = function()
-    G.FUNCS.draw_from_deck_to_hand(card.ability.extra.cards)
+    SMODS.draw_cards(card.ability.extra.cards)
     return true
   end
   }))
+end,
+can_use = function(self, card)
+    return #G.hand.highlighted <= card.ability.extra.targets and #G.hand.highlighted > 0 and G.deck and #G.deck.cards > 0
 end,
 }
 
@@ -1270,6 +1270,7 @@ SMODS.Booster {
   cost = 4,
   order = 1,
   weight = 0.96,
+  draw_hand = true,
   create_card = function(self, card)
       return create_card("Magic", G.pack_cards, nil, nil, true, true, nil, "mtg_magic")
   end,
@@ -1294,6 +1295,7 @@ SMODS.Booster {
   cost = 6,
   order = 1,
   weight = 0.96,
+  draw_hand = true,
   create_card = function(self, card)
       return create_card("Magic", G.pack_cards, nil, nil, true, true, nil, "mtg_magic")
   end,
@@ -1318,6 +1320,7 @@ SMODS.Booster {
   cost = 6,
   order = 1,
   weight = 0.48,
+  draw_hand = true,
   create_card = function(self, card)
       return create_card("Magic", G.pack_cards, nil, nil, true, true, nil, "mtg_magic")
   end,
@@ -1342,6 +1345,7 @@ SMODS.Booster {
   cost = 6,
   order = 1,
   weight = 0.48,
+  draw_hand = true,
   create_card = function(self, card)
       return create_card("Magic", G.pack_cards, nil, nil, true, true, nil, "mtg_magic")
   end,
@@ -1366,6 +1370,7 @@ SMODS.Booster {
   cost = 5,
   order = 1,
   weight = 0.48,
+  draw_hand = true,
   create_card = function(self, card)
       return create_card("Land", G.pack_cards, nil, nil, true, true, nil, "mtg_magic")
   end,
