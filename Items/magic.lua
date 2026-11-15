@@ -1222,7 +1222,7 @@ SMODS.Consumable {
 	key = "blacklotus",
 	pos = { x = 0, y = 0 },
 	hidden = true,
-  cost=7000000,
+  cost = 4,
 	soul_set = "Magic",
 	order = 21,
 	atlas = "lotus",
