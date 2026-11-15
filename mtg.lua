@@ -6,6 +6,10 @@ if not MTJ then
 	MTJ = {}
 end
 
+MTJ.colours = {
+	pink = HEX("FF7ABF")
+}
+
 MagicTheJokering = SMODS.current_mod
 -- Load Options
 MagicTheJokering_config = MagicTheJokering.config
@@ -178,6 +182,11 @@ SMODS.Atlas({
 	py = 95,
 })
 
+if (SMODS.Mods["SilkTouch"] or {}).can_load then
+  assert(SMODS.load_file("silktouch/silktouch.lua"))()
+end
+
+assert(SMODS.load_file("lib/functions.lua"))()
 assert(SMODS.load_file("lib/utility.lua"))()
 assert(SMODS.load_file("lib/Damage.lua"))()
 assert(SMODS.load_file("lib/energy.lua"))()
